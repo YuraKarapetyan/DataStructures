@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -10,6 +10,27 @@ public class MyBinaryTree<T> : IEnumerable<T>
     private MyBinaryTreeNode<T> Root { get; set; }
     private int Count;
 
+    #region Find
+    private MyBinaryTreeNode<T> Find(T value)
+    {
+        return Find(Root, value);
+    }
+    private MyBinaryTreeNode<T> Find(MyBinaryTreeNode<T> node, T value)
+    {
+        if (node == null)
+            return null;
+        int compare = value.CompareTo(node.Value);
+        if (compare == 0)
+            return node;
+        else if (compare < 0)
+            return Find(node.Left, value);
+
+        return Find(node.Right, value);
+
+    }
+
+    #endregion
+
     #region Add
 
     public void Add(T value)
@@ -18,7 +39,7 @@ public class MyBinaryTree<T> : IEnumerable<T>
         Count++;
     }
 
-    private MyBinaryTreeNode<T> Add(MyBinaryTreeNode<T> node, T value)
+    private static MyBinaryTreeNode<T> Add(MyBinaryTreeNode<T> node, T value)
     {
         if (node == null)
             return new MyBinaryTreeNode<T>(value);
@@ -94,63 +115,57 @@ public class MyBinaryTree<T> : IEnumerable<T>
     #region Traversals
 
     // In-order 
-    public IEnumerable<T> InOrder()
+    public List<T> InOrder()
     {
-        return InOrder(Root);
+        var result = new List<T>();
+        InOrder(Root, result);
+        return result;
     }
 
-    private IEnumerable<T> InOrder(MyBinaryTreeNode<T> node)
+    private void InOrder(MyBinaryTreeNode<T> node, List<T> result)
     {
-        if (node != null)
-        {
-            foreach (var left in InOrder(node.Left))
-                yield return left;
+        if (node == null)
+            return;
 
-            yield return node.Value;
-
-            foreach (var right in InOrder(node.Right))
-                yield return right;
-        }
+        InOrder(node.Left, result);
+        result.Add(node.Value);
+        InOrder(node.Right, result);
     }
 
-    // Pre-order (Root, Left, Right)
-    public IEnumerable<T> PreOrder()
+    // Pre-order 
+    public List<T> PreOrder()
     {
-        return PreOrder(Root);
+        var result = new List<T>();
+        PreOrder(Root, result);
+        return result;
     }
 
-    private IEnumerable<T> PreOrder(MyBinaryTreeNode<T> node)
+    private void PreOrder(MyBinaryTreeNode<T> node, List<T> result)
     {
-        if (node != null)
-        {
-            yield return node.Value;
+        if (node == null)
+            return;
 
-            foreach (var left in PreOrder(node.Left))
-                yield return left;
-
-            foreach (var right in PreOrder(node.Right))
-                yield return right;
-        }
+        result.Add(node.Value);
+        PreOrder(node.Left, result);
+        PreOrder(node.Right, result);
     }
 
-    // Post-order (Left, Right, Root)
-    public IEnumerable<T> PostOrder()
+    // Post-order
+    public List<T> PostOrder()
     {
-        return PostOrder(Root);
+        var result = new List<T>();
+        PostOrder(Root, result);
+        return result;
     }
 
-    private IEnumerable<T> PostOrder(MyBinaryTreeNode<T> node)
+    private void PostOrder(MyBinaryTreeNode<T> node, List<T> result)
     {
-        if (node != null)
-        {
-            foreach (var left in PostOrder(node.Left))
-                yield return left;
+        if (node == null)
+            return;
 
-            foreach (var right in PostOrder(node.Right))
-                yield return right;
-
-            yield return node.Value;
-        }
+        PostOrder(node.Left, result);
+        PostOrder(node.Right, result);
+        result.Add(node.Value);
     }
 
     #endregion
